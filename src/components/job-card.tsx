@@ -1,4 +1,5 @@
 import { SimpleJobApplication } from "@/lib/types/application"
+import { dateUtils } from "@/lib/utils/date-format"
 
 interface JobCardProps {
   applications: SimpleJobApplication[]
@@ -14,7 +15,7 @@ function JobCard({ applications }: JobCardProps) {
         >
           <div className="border-b border-gray-200 pb-4">
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold">{app.company}</h3>
+              <h3 className="dark:text-black font-semibold">{app.company}</h3>
               <span className={`text-sm px-2 py-1 rounded ${app.status === 'Applied' ? 'bg-blue-100 text-blue-800' :
                 'bg-green-100 text-green-800'
                 }`}>
@@ -25,7 +26,7 @@ function JobCard({ applications }: JobCardProps) {
           <div className="pt-4 space-y-2">
             <p className="text-gray-600">{app.position}</p>
             <p className="text-sm text-gray-500">Next: {app.nextAction}</p>
-            <p className="text-sm text-gray-500">Updated: {app.lastUpdated}</p>
+            <p className="text-sm text-gray-500">Updated: {dateUtils.relative(app.lastUpdated)}</p>
           </div>
         </div>
       ))}

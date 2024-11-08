@@ -1,4 +1,5 @@
 import { SimpleJobApplication } from "@/lib/types/application"
+import { dateUtils } from "@/lib/utils/date-format"
 import { ColumnDef } from "@tanstack/react-table"
 
 export const columns: ColumnDef<SimpleJobApplication>[] = [
@@ -21,5 +22,9 @@ export const columns: ColumnDef<SimpleJobApplication>[] = [
   {
     accessorKey: "lastUpdated",
     header: "Last Updated",
+    cell: ({ row }) => {
+      // Format the date
+      return dateUtils.relative(row.getValue("lastUpdated"))
+    }
   }
 ]
