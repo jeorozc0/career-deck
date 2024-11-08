@@ -11,8 +11,8 @@ export default function Dashboard() {
   const { data: applications, isLoading, error } = useApplications();
 
   return (
-    <div className="flex flex-col p-20 w-screen min-h-screen bg-black">
-      <HomeHeader view={view} setView={setView} />
+    <div className="flex flex-col p-20 w-screen min-h-screen bg-[##FBFBF3] dark:bg-[#161616]">
+      <HomeHeader setView={setView} />
       {view == 'table' && (<DataTable columns={columns} data={applications} />
       )}
       {view == 'card' && (<JobCard applications={applications} />
