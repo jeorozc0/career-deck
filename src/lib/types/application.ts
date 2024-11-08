@@ -14,3 +14,10 @@ export interface SimpleJobApplication {
   nextAction: string
   lastUpdated: string
 }
+
+export type CreateApplicationDto = {
+  company: string;
+  position: string;
+  status: string;
+  nextAction?: string;
+};
