@@ -1,3 +1,4 @@
+// src/components/jobs-table.tsx
 import {
   ColumnDef,
   flexRender,
@@ -21,8 +22,8 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white">
-      <div className="overflow-x-auto">
+    <div className="relative w-full overflow-hidden rounded-lg border border-gray-200">
+      <div className="overflow-x-auto bg-white">
         <table className="w-full text-sm">
           <thead className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup) => (
