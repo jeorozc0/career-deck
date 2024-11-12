@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchApplications, CreateApplication } from '@/lib/api/applications';
+import { fetchApplications, CreateApplication, deleteApplication } from '@/lib/api/applications';
 import { CreateApplicationDto, SimpleJobApplication } from '@/lib/types/application';
 import { useToast } from './use-toast';
 
@@ -31,6 +31,29 @@ export function useCreateApplication() {
         variant: "destructive",
         title: "Error",
         description: "Failed to create application",
+      });
+    },
+  });
+}
+
+export function useDeleteApplication() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteApplication(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      toast({
+        title: "Application deleted",
+        description: "The application has been deleted successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not delete application",
       });
     },
   });

@@ -54,3 +54,35 @@ export async function CreateApplication(data: CreateApplicationDto): Promise<Sim
     throw new APIResponseError(500, 'Failed to create application');
   }
 }
+
+export async function deleteApplication(id: number): Promise<void> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/applications/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      // Try to get error message from response
+      let errorMessage = 'Failed to delete application';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        errorMessage = response.statusText || errorMessage;
+      }
+
+      throw new APIResponseError(
+        response.status,
+        errorMessage
+      );
+    }
+  } catch (error) {
+    if (error instanceof APIResponseError) {
+      throw error;
+    }
+    throw new APIResponseError(
+      500,
+      error instanceof Error ? error.message : 'An unexpected error occurred'
+    );
+  }
+}
