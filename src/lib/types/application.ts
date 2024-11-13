@@ -7,12 +7,13 @@ export type ApplicationStatus =
   | "Accepted"
 
 export interface SimpleJobApplication {
-  id: number
+  id: string
   company: string
   position: string
   status: ApplicationStatus
   nextAction: string
   lastUpdated: string
+  createdAt?: string
 }
 
 export type CreateApplicationDto = {
