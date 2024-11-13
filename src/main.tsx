@@ -5,17 +5,17 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Dashboard from './pages/dashboard';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from './components/ui/toaster';
 import ApplicationPage from './pages/application-page';
+import ApplicationDashboard from './pages/application-dashboard';
 
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Dashboard />
+    element: <ApplicationDashboard />
   },
   {
     path: "/application/:id",
