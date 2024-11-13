@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useParams } from 'react-router-dom';
+import { useApplicationByID } from '@/hooks/useApplications';
 
 // Mock data stays the same
 const timelineItems = [
@@ -46,11 +48,11 @@ const documents = [
 ];
 
 const dateUtils = {
-  standard: (date) => new Date(date).toLocaleDateString()
+  standard: (date: string) => new Date(date).toLocaleDateString()
 };
 
 // StatusBadge component using shadcn Badge with custom colors
-function StatusBadge({ status }) {
+function StatusBadge({ status }: any) {
   const colors = {
     Applied: 'bg-blue-100 text-blue-800 hover:bg-blue-100',
     Interviewing: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100',
@@ -69,6 +71,7 @@ function StatusBadge({ status }) {
   );
 }
 
+
 // Main ApplicationDetailPage component
 const ApplicationDetailPage = () => {
   // Mock application data
@@ -79,6 +82,18 @@ const ApplicationDetailPage = () => {
     createdAt: "2024-11-01"
   };
 
+  const { id } = useParams<{ id: string }>();
+  const {
+    data: fetchedApplication,
+    isLoading,
+    isError,
+    error
+  } = useApplicationByID(
+    { id }
+    // Optionally disable the query based on conditions
+  );
+
+
   return (
     <div className="min-h-screen w-full bg-background p-8">
       {/* Header */}
@@ -88,11 +103,11 @@ const ApplicationDetailPage = () => {
             <AvatarFallback className="text-2xl font-bold">G</AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-2xl font-bold">{application.company}</h1>
-            <p className="text-muted-foreground">{application.position}</p>
+            <h1 className="text-2xl font-bold">{fetchedApplication?.company}</h1>
+            <p className="text-muted-foreground">{fetchedApplication?.position}</p>
           </div>
         </div>
-        <StatusBadge status={application.status} />
+        <StatusBadge status={fetchedApplication?.status} />
       </header>
 
       {/* Main Grid */}
@@ -105,7 +120,7 @@ const ApplicationDetailPage = () => {
           <CardContent className="space-y-3">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Applied</span>
-              <span>{dateUtils.standard(application.createdAt)}</span>
+              <span>{dateUtils.standard(fetchedApplication?.createdAt || "")}</span>
             </div>
             <Separator />
             <div className="flex justify-between">
