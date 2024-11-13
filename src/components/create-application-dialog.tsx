@@ -59,7 +59,7 @@ export function CreateApplication() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">New Application</Button>
+        <Button variant="outline">New Application</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

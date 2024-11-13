@@ -51,9 +51,7 @@ export function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger className="focus-visible:ring-transparent" asChild>
         <Button
-          className={buttonVariants({
-            variant: "default",
-          })}
+          variant="outline"
         >
           <ThemeToggleSvg />
         </Button>
