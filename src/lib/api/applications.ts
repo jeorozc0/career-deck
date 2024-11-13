@@ -9,7 +9,7 @@ export class APIResponseError extends Error {
   }
 }
 
-export async function fetchApplications(): Promise<SimpleJobApplication[]> {
+export async function FetchApplications(): Promise<SimpleJobApplication[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/applications`);
 
@@ -26,6 +26,26 @@ export async function fetchApplications(): Promise<SimpleJobApplication[]> {
       throw error;
     }
     throw new APIResponseError(500, 'Failed to fetch applications');
+  }
+}
+
+export async function FetchApplicationByID(id: string): Promise<SimpleJobApplication> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/applications/${id}`);
+
+    if (!response.ok) {
+      throw new APIResponseError(
+        response.status,
+        `Failed to fetch application: ${response.statusText}`
+      );
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof APIResponseError) {
+      throw error;
+    }
+    throw new APIResponseError(500, 'Failed to fetch application');
   }
 }
 
@@ -55,7 +75,7 @@ export async function CreateApplication(data: CreateApplicationDto): Promise<Sim
   }
 }
 
-export async function deleteApplication(id: number): Promise<void> {
+export async function DeleteApplication(id: string): Promise<void> {
   try {
     const response = await fetch(`${API_BASE_URL}/applications/${id}`, {
       method: 'DELETE',
@@ -84,5 +104,31 @@ export async function deleteApplication(id: number): Promise<void> {
       500,
       error instanceof Error ? error.message : 'An unexpected error occurred'
     );
+  }
+}
+
+export async function UpdateApplication(id: string, data: Partial<SimpleJobApplication>): Promise<SimpleJobApplication> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/applications/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new APIResponseError(
+        response.status,
+        'Failed to update application'
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof APIResponseError) {
+      throw error;
+    }
+    throw new APIResponseError(500, 'Failed to update application');
   }
 }
