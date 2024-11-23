@@ -1,4 +1,4 @@
-import { CreateApplicationDto, SimpleJobApplication } from "../types/application";
+import { CompleteApplication, CreateApplicationDto, SimpleJobApplication } from "../types/application";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -19,7 +19,6 @@ export async function FetchApplications(): Promise<SimpleJobApplication[]> {
         `Failed to fetch applications: ${response.statusText}`
       );
     }
-
     return await response.json();
   } catch (error) {
     if (error instanceof APIResponseError) {
@@ -29,7 +28,7 @@ export async function FetchApplications(): Promise<SimpleJobApplication[]> {
   }
 }
 
-export async function FetchApplicationByID(id: string): Promise<SimpleJobApplication> {
+export async function FetchApplicationByID(id: string): Promise<CompleteApplication> {
   try {
     const response = await fetch(`${API_BASE_URL}/applications/${id}`);
 
@@ -39,7 +38,6 @@ export async function FetchApplicationByID(id: string): Promise<SimpleJobApplica
         `Failed to fetch application: ${response.statusText}`
       );
     }
-
     return await response.json();
   } catch (error) {
     if (error instanceof APIResponseError) {

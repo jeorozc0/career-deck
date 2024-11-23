@@ -1,13 +1,16 @@
-import { SimpleJobApplication } from "@/lib/types/application"
+import { ApplicationStatus, SimpleJobApplication } from "@/lib/types/application"
 import { dateUtils } from "@/lib/utils/date-format"
 import { Button } from "./ui/button"
-import { Calendar, ArrowRight } from "lucide-react"
-import { useDeleteApplication } from "@/hooks/useApplications"
+import {
+  Calendar,
+  MapPin,
+  DollarSign,
+  ChevronRight,
+} from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { Card, CardContent, CardHeader } from "./ui/card"
+import { Card, CardContent } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { Avatar, AvatarFallback } from "./ui/avatar"
-import { Separator } from "./ui/separator"
 import { QuickActionsMenu } from "./quick-actions-menu"
 
 interface ApplicationCardProps {
@@ -15,83 +18,100 @@ interface ApplicationCardProps {
 }
 
 export function ApplicationCard({ application }: ApplicationCardProps) {
-  const { mutate: deleteApplication, isPending } = useDeleteApplication();
   const navigate = useNavigate();
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('.dropdown-trigger')) {
-      e.stopPropagation();
-      return;
-    }
+  const handleCardClick = () => {
     navigate(`/application/${application.id}`);
   };
 
-  const getStatusStyle = (status: string) => {
+  const getStatusStyle = (status: ApplicationStatus) => {
     const colors = {
-      Applied: 'bg-blue-100 text-blue-800 hover:bg-blue-100',
-      Interviewing: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100',
-      Offer: 'bg-green-100 text-green-800 hover:bg-green-100',
-      Rejected: 'bg-red-100 text-red-800 hover:bg-red-100',
-      Accepted: 'bg-purple-100 text-purple-800 hover:bg-purple-100',
-      default: 'bg-green-100 text-green-800 hover:bg-green-100'
+      Saved: 'bg-gray-100 text-gray-800',
+      Applied: 'bg-blue-100 text-blue-800',
+      Interviewing: 'bg-yellow-100 text-yellow-800',
+      Offer: 'bg-green-100 text-green-800',
+      Rejected: 'bg-red-100 text-red-800',
+      Accepted: 'bg-purple-100 text-purple-800',
     };
-    return colors[status] || colors.default;
+    return colors[status] || colors.Applied;
   };
 
-  const getCompanyInitial = (company: string) => {
-    return company.charAt(0).toUpperCase();
+  const formatSalary = (min?: number, max?: number) => {
+    if (!min && !max) return null;
+    const formatNumber = (num: number) =>
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(num);
+
+    if (min && max) return `${formatNumber(min)} - ${formatNumber(max)}`;
+    if (min) return `From ${formatNumber(min)}`;
+    if (max) return `Up to ${formatNumber(max)}`;
   };
 
   return (
-    <Card
-      className="hover:shadow-lg transition-shadow"
-    >
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start space-x-4">
-          <div className="flex items-center space-x-4">
+    <Card className="hover:shadow-md transition-shadow">
+      <CardContent className="pt-6">
+        <div className="flex justify-between">
+          {/* Left side - Company info */}
+          <div className="flex gap-4">
             <Avatar className="h-12 w-12">
               <AvatarFallback className="bg-primary/10">
-                {getCompanyInitial(application.company)}
+                {application.company.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <h3 className="font-semibold">{application.company}</h3>
+            <div className="space-y-1">
+              <h3 className="font-semibold text-base">{application.company}</h3>
               <p className="text-sm text-muted-foreground">{application.position}</p>
+              {application.location && (
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <MapPin className="h-3 w-3 mr-1" />
+                  {application.location}
+                </div>
+              )}
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+
+          {/* Right side - Status and actions */}
+          <div className="flex flex-col items-end gap-2">
             <QuickActionsMenu application={application} />
+            <Badge className={getStatusStyle(application.status)}>
+              {application.status}
+            </Badge>
           </div>
         </div>
-      </CardHeader>
 
-      <CardContent>
-        <div className="space-y-4">
-          <Separator className="my-4" />
-          <div className="space-y-2">
-            <div className="flex mb-4">
-              <Badge
-                variant="outline"
-                className={`px-2 py-1 border-0 ${getStatusStyle(application.status)}`}
-              >
-                {application.status}
-              </Badge>
+        {/* Bottom section */}
+        <div className="mt-4 space-y-3">
+          {/* Salary if available */}
+          {formatSalary(application.salaryMin, application.salaryMax) && (
+            <div className="flex items-center text-sm text-muted-foreground">
+              <DollarSign className="h-4 w-4 mr-1" />
+              {formatSalary(application.salaryMin, application.salaryMax)}
             </div>
-            <div className="flex flex-row gap-2">
-              <div className="flex items-center text-sm">
-                <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Next Action:</span>
-              </div>
-              <p className="text-sm font-medium">{application.nextAction || 'No action required'}</p>
-            </div>
+          )}
+
+          {/* Next action */}
+          <div className="flex items-center text-sm">
+            <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
+            <span className="text-muted-foreground mr-1">Next Action:</span>
+            <span>{application.next_action || 'No action required'}</span>
           </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">
+
+          {/* Footer */}
+          <div className="flex justify-between items-center pt-2">
+            <span className="text-sm text-muted-foreground">
               Updated {dateUtils.relative(application.lastUpdated)}
             </span>
-            <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={() => navigate(`application/${application.id}`)}>
-              View Details
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCardClick}
+              className="text-muted-foreground hover:text-primary"
+            >
+              Details
+              <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
         </div>

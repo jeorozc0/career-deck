@@ -18,10 +18,12 @@ import {
 import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { Plus, Building2, MapPin, BadgeDollarSign, Briefcase } from "lucide-react"
+import { Building2, MapPin, BadgeDollarSign, Briefcase, Pencil } from "lucide-react"
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
-import { useCreateApplication } from "@/hooks/useApplications"
+import { useUpdateApplication } from "@/hooks/useApplications"
+import { SimpleJobApplication } from "@/lib/types/application"
+import { DropdownMenuItem } from "./ui/dropdown-menu"
 
 const applicationSchema = z.object({
   company: z.string().min(1, "Company name is required"),
@@ -58,26 +60,32 @@ const statusOptions = [
   { value: "Rejected", label: "❌ Rejected" },
 ];
 
-export function CreateApplication() {
-  const mutation = useCreateApplication();
+interface EditApplicationProps {
+  application: SimpleJobApplication;
+}
+
+export function EditApplication({ application }: EditApplicationProps) {
+  const mutation = useUpdateApplication();
   const [open, setOpen] = useState(false);
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
-      company: "",
-      position: "",
-      location: "",
-      status: "Saved",
-      salaryMin: 0,
-      salaryMax: 0,
+      company: application.company,
+      position: application.position,
+      location: application.location,
+      status: application.status,
+      salaryMin: application.salaryMin,
+      salaryMax: application.salaryMax,
     },
   });
 
   function onSubmit(data: ApplicationFormValues) {
-    mutation.mutate(data, {
+    mutation.mutate({
+      id: application.id,
+      data: data
+    }, {
       onSuccess: () => {
-        form.reset();
-        setOpen(false)
+        setOpen(false);
       }
     });
   }
@@ -85,14 +93,14 @@ export function CreateApplication() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Application
-        </Button>
+        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+          <Pencil className="mr-2 h-4 w-4" />
+          Edit
+        </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Create New Application</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Edit Application</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -250,7 +258,7 @@ export function CreateApplication() {
               <Button variant="outline" type="button" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Create Application</Button>
+              <Button type="submit">Save Changes</Button>
             </div>
           </form>
         </Form>

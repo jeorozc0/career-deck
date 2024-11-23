@@ -2,13 +2,14 @@ import { FolderPlus } from "lucide-react"
 import { ApplicationCard } from "@/components/application-card"
 import HomeHeader from "@/components/home-header"
 import { useApplications } from "@/hooks/useApplications"
+import { ApplicationCardSkeleton } from "@/components/application-card-skeleton";
 
 export default function ApplicationDashboard() {
   const { data: applications, isLoading, error } = useApplications();
 
   if (!applications?.length) {
     return (
-      <div className="flex flex-col p-20 w-screen min-h-screen bg-background">
+      <div className="flex flex-col p-8 w-screen min-h-screen bg-background">
         <HomeHeader />
         <div className="grid place-items-center min-h-[400px]">
           <div className="text-center space-y-4">
@@ -25,6 +26,12 @@ export default function ApplicationDashboard() {
         </div>
       </div>
     );
+  }
+
+  if (isLoading) {
+    return (
+      <ApplicationCardSkeleton />
+    )
   }
 
   return (

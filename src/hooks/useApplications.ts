@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FetchApplications, CreateApplication, DeleteApplication, UpdateApplication, FetchApplicationByID } from '@/lib/api/applications';
-import { CreateApplicationDto, SimpleJobApplication } from '@/lib/types/application';
+import { CompleteApplication, CreateApplicationDto, SimpleJobApplication } from '@/lib/types/application';
 import { useToast } from './use-toast';
 
 interface UseApplicationByIDProps {
@@ -19,7 +19,7 @@ export function useApplications() {
 export function useApplicationByID({ id }: UseApplicationByIDProps) {
   const { toast } = useToast();
 
-  return useQuery<SimpleJobApplication, Error>({
+  return useQuery<CompleteApplication, Error>({
     queryKey: ['applications', id],
     queryFn: async () => {
       try {
@@ -122,7 +122,7 @@ export function useUpdateApplication() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update application",
+        description: error.message,
       });
     },
   });
