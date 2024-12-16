@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { FetchApplications, CreateApplication, DeleteApplication, UpdateApplication, FetchApplicationByID } from '@/lib/api/applications';
-import { CompleteApplication, CreateApplicationDto, SimpleJobApplication } from '@/lib/types/application';
+import { FetchApplications, CreateApplication, DeleteApplication, UpdateApplication, FetchApplicationByID, CreateEvent, CreateStep, UpdateStep } from '@/lib/api/applications';
+import { CompleteApplication, CreateApplicationDto, CreateEventPayload, CreateStepPayload, Event, SimpleJobApplication, Step, UpdateApplicationDto } from '@/lib/types/application';
 import { useToast } from './use-toast';
 
 interface UseApplicationByIDProps {
@@ -114,8 +114,8 @@ export function useUpdateApplication() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['applications'] });
       toast({
-        title: "Application Created",
-        description: `Successfully update application for ${data.company}`,
+        title: "Application Updated",
+        description: `Successfully updated application for ${data.company}`,
       });
     },
     onError: (error) => {
@@ -127,3 +127,78 @@ export function useUpdateApplication() {
     },
   });
 }
+
+export function useCreateEvent() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: {
+      id: string,
+      data: CreateEventPayload
+    }) => CreateEvent({ id, data }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      toast({
+        title: "Event Created",
+        description: 'Successfully created event',
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    },
+  });
+}
+
+export function useCreateStep() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: {
+      id: string,
+      data: CreateStepPayload
+    }) => CreateStep({ id, data }),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      toast({
+        title: "Step Created",
+        description: 'Successfully created step',
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    },
+  });
+}
+
+export function useUpdateStep() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: ({ id, data }: {
+      id: string,
+      data: Partial<Step>
+    }) => UpdateStep(id, data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    },
+  });
+}
+
