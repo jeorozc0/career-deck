@@ -1,4 +1,4 @@
-import { CompleteApplication, CreateApplicationDto, SimpleJobApplication } from "../types/application";
+import { CompleteApplication, CreateApplicationDto, CreateEventPayload, CreateStepPayload, Event, SimpleJobApplication, Step } from "../types/application";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -128,5 +128,99 @@ export async function UpdateApplication(id: string, data: Partial<SimpleJobAppli
       throw error;
     }
     throw new APIResponseError(500, 'Failed to update application');
+  }
+}
+
+export async function CreateEvent({ id, data }: {
+  id: string,
+  data: CreateEventPayload
+}): Promise<Event> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/applications/${id}/event`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      // Print response details
+      console.error('Error Status:', response.status);
+      console.error('Error Text:', await response.text());
+      throw new APIResponseError(
+        response.status,
+        'Failed to create event'
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    // Print error details
+    console.error('Create Event Error:', error);
+    if (error instanceof APIResponseError) {
+      throw error;
+    }
+    throw new APIResponseError(500, 'Failed to create event');
+  }
+}
+
+export async function CreateStep({ id, data }: {
+  id: string,
+  data: CreateStepPayload
+}): Promise<Event> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/applications/${id}/step`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      // Print response details
+      console.error('Error Status:', response.status);
+      console.error('Error Text:', await response.text());
+      throw new APIResponseError(
+        response.status,
+        'Failed to create step'
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    // Print error details
+    console.error('Create Event Error:', error);
+    if (error instanceof APIResponseError) {
+      throw error;
+    }
+    throw new APIResponseError(500, 'Failed to create event');
+  }
+}
+
+export async function UpdateStep(id: string, data: Partial<Step>): Promise<Step> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/applications/steps/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new APIResponseError(
+        response.status,
+        'Failed to update step'
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof APIResponseError) {
+      throw error;
+    }
+    throw new APIResponseError(500, 'Failed to update step');
   }
 }
