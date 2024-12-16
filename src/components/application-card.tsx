@@ -87,7 +87,6 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           {/* Salary if available */}
           {formatSalary(application.salaryMin, application.salaryMax) && (
             <div className="flex items-center text-sm text-muted-foreground">
-              <DollarSign className="h-4 w-4 mr-1" />
               {formatSalary(application.salaryMin, application.salaryMax)}
             </div>
           )}
